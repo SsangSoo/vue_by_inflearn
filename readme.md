@@ -49,6 +49,8 @@ v-bind 속성을 이용하여 script태그에서 선언한 message를 바인딩 
   <img src="https://velog.velcdn.com/images/tjdtn4484/post/0d4ac0f1-872a-4250-ae51-3a02e27ff335/image.png">
 </div>
 
+ <br>
+
 <div align="left">
   <img src="https://velog.velcdn.com/images/tjdtn4484/post/494205e7-11a3-4fce-b967-ad9470d31d08/image.png">
 </div>
