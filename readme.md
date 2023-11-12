@@ -15,7 +15,7 @@ JetBrain에서 제공하는 WebStrom을 이용합니다.
 
 <details>
 <summary>개발환경 구성</summary>
-- 강의에서 소개하는 vsCode의 확장프로그램은 이미 WebStrom에서 모두 제공되는 기능이므로, 생략합니다.
+- 강의에서 소개하는 vsCode의 확장프로그램은 이미 WebStrom에서 모두 제공되는 기능이므로, 생략합니다. <br>
 - 크롬 웹스토어에서 `vue devtools`를 검색하면 Vue.js devtools 2개가 나오는데, 이중 legacy는 Vue2를 가리킵니다. <br> 따라서 레거시가 아닌 Vue.js devtools를 설치합니다.
 </details>
 
@@ -40,7 +40,7 @@ User Interface 개발을 위한 자바스크립트 프레임워크입니다.
 
 관련된 파일은 [quickly.html](./src/tmp/quickly.html)입니다.
 
-v-bind 속성을 이용하여 script태그에서 선언한 message를 바인딩 시켜줍나다 .
+v-bind 속성을 이용하여 script태그에서 선언한 message를 바인딩 시켜줍나다 .  <br>
 그리고 message의 값이 변경되면, 자동으로 placeholder의 값도 변경됩니다.
 
 참고로 vue.js devtools를 다운로드하고, 다음과 같이 사용할 수 있습니다.
@@ -61,7 +61,7 @@ v-bind 속성을 이용하여 script태그에서 선언한 message를 바인딩 
 
 관련된 파일은 [quickly.html](./src/tmp/quickly.html)입니다.
 
-순수 html 태그 안에 `on`과 이벤트를 입력하면, 핸들링을 할 수 있는데,
+순수 html 태그 안에 `on`과 이벤트를 입력하면, 핸들링을 할 수 있는데,  <br>
 Vue에선 `v-on`과 이벤트를 입력하여 핸들링을 할 수 있습니다.
 
 reverseMessage와 관련된 코드입니다.
@@ -76,13 +76,13 @@ reverseMessage와 관련된 코드입니다.
 관련된 파일은 [quickly.html](./src/tmp/quickly.html)입니다.
 username 과 관련된 코드입니다.
 
-script에서 변경시엔, tag안의 값도 변경되어 나타납니다.
-반면, 브라우저의 값을 변경하면, script 태그 안의 내용은 변경되지 않습니다.
+script에서 변경시엔, tag안의 값도 변경되어 나타납니다.  <br>
+반면, 브라우저의 값을 변경하면, script 태그 안의 내용은 변경되지 않습니다.  <br>  <br>
 
-왜냐하면, 단방향으로 바인딩되어 있기 때문인데요.
-그래서 브라우저에서 값을 변경하면, 스크립트의 value도 변경될 수 있도록 **양방향 바인딩**을 해주어야 합니다.
+왜냐하면, 단방향으로 바인딩되어 있기 때문인데요.  <br>
+그래서 브라우저에서 값을 변경하면, 스크립트의 value도 변경될 수 있도록 **양방향 바인딩**을 해주어야 합니다.  <br> <br>
 
-**양방향 바인딩**을 하기 위해 쓰는 것이 **v-model**입니다.
+**양방향 바인딩**을 하기 위해 쓰는 것이 **v-model**입니다.  <br>
 이 때 브라우저에서 값이 변경되면 스크립트의 value도 함께 변경됩니다.
 
 ```
