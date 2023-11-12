@@ -119,3 +119,154 @@ script에서 변경시엔, tag안의 값도 변경되어 나타납니다.  <br>
 ```
 
 </details>
+
+<details>
+<summary>컴포넌트 이해하기</summary>
+
+**모듈** : 자바스크립트 코드를 재사용할 수 있도록 분리한 파일 <br><br>
+
+**컴포넌트**                            <br>
+- 뷰에서 UI를 재활용할 수 있도록 정의한 것   <br>                           
+- 컴포넌트를 활용하면 자바스크립트 코드뿐만 아니라, HTML, CSS도 함께 캡슐화하여 재사용 가능. <br><br>
+
+컴포넌트의 정의에든 두 가지 방법이 있습니다. <br><br>
+
+하나는 **문자열 템플릿**, 하나는 **SFC(Single File Component)**가 있습니다. <br>
+
+```
+<script> 
+    const BookComponent = {
+        template : `
+            <article class="book">
+                <div class="book_subtitle">제목</div>
+                <div class="book__title">HTML 강좌</div>
+            </article>
+        `,    
+    };
+    
+    const app = Vue.createApp({});
+    app.component("BookComponent",BookComponent);
+    app.mount("#app");
+</script>
+```
+
+위와 같이 component를 선언하고, <br>
+등록했다면, <br>
+사용만 하면 됩니다. <br><br>
+
+사용은 body태그 안에 다음과 같이 추가만 해주면 됩니다.
+<br>
+```
+<book-component></book-component>
+```
+<br>
+그럼 해당 template 내의 구조가 만들어집니다.<br>
+
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/cf18fbe6-38f7-4bf8-9fc3-81e8d5f421dc/image.png">
+</div>
+
+<br>
+
+컴포넌트를 활용하면, 이처럼 단 몇 줄의 태그로 아래와 같은 UI를 만들 수 있습니다. <br>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/d98eaf54-a7df-4aa1-953e-60d9f58d01d9/image.png">
+</div>
+
+관련된 파일은 [여기](./src/learning-component/index.html)에 있습니다. <br><br>
+
+그리고 위에 사진에 보시면 **Root 컴포넌트**가 존재함을 알 수 있는데, <br>
+루트 컴포넌트는 처음 `Vue.craeteApp({})`으로 루트 컴포넌트를 처음에 생성할 때 괄호 안에 옵션을 전달하는데, <br>
+그 옵션은 루트 컴포넌트를 생성할 때 사용하는 옵션입니다. <br><br>
+
+그리고 이 태그들도 줄일 수 있습니다. <br>
+
+```
+const App = {
+            template: `
+            <app-header></app-header>
+            <app-nav></app-nav>
+            <app-view></app-view>
+            `,
+        }
+///
+
+app.component("App", App);
+app.mount("#app");
+
+
+//  HTML에 한 번에 한 줄로도 선언가능합니다.
+<app></app>
+
+```
+<br>
+지금까지의 방법은 **문자열 팀플릿**에 관한 내용입니다. <br>
+이 방법은 계속 추가되는 내용이 있으면 코드가 길어지고, 불편해집니다. <br>
+
+그래서 현업에서도 SFC 방식으로 개발을 진행하는데, <br>
+SFC 방식으로는 **Vue CLI** 혹은 **Vite** 와 같은 빌드 도구가 필요합니다.
+
+#### Vite 사용시
+
+```
+npm init -y
+```
+
+뷰도 npm으로 프로젝트를 관리할 것이기 때문에, cdn 방식이 아닌 npm으로 라이브러리를 설치해야 합니다.
+
+```
+npm install vue
+```
+
+vite 설치는 다음과 같습니다.
+
+```
+npm install vite
+```
+
+그리고 비트로 Vue.js 개발을 하려면 플러그인이 필요합니다. <br>
+
+참고로 플러그인 [사이트는 바로 여기](https://github.com/vitejs/vite-plugin-vue/tree/main/packages/plugin-vue)입니다.
+
+```
+npm i @vitejs/plugin-vue
+```
+
+그리고 vite는 실행시 vite.config.js 파일을 참조합니다. <br><br>
+
+다음으로 해당코드를 vite.config.js에 붙여넣기 해주시면 됩니다. <br>
+(해당 링크에서 처음으로 나오는 코드입니다.) <br>
+
+```
+// vite.config.js
+import vue from '@vitejs/plugin-vue'
+
+export default {
+  plugins: [vue()],
+}
+```
+
+이제 비트 설치가 끝났습니다.
+
+package.json에서 script 태그 안에서 dev라는 이름응로 vite를 추가해줍니다.
+
+```
+"dev": "vite",
+```
+
+이후 실행시 다음 명령어를 실행하면 됩니다.
+
+```
+npm run dev
+```
+
+### 컴포넌트를 사용하는 이유
+- 컴포넌트를 사용하면 UI를 재사용 할 수 있습니다.
+  - 프론트엔드 개발을 하다보면 JavaScript 뿐만 아니라 HTML, CSS를 반복적으로 사용할 때가 있습니다. <br> 이런경우 컴포넌트로 캡슐화 한 후 필요한 곳에서 사용할 수 있습니다.
+- 컴포넌트를 사용하여 UI를 독립적으로 나눔으로써(레이아웃 등) 코드를 클린하게 할 수 있습니다.
+  - 프론트엔드 개발을 하다보면 코드가 길어져 유지보수가 힘들 수 있습니다. <br> 이런경우 컴포넌트로 독립적으로 분리함으로써 코드를 클린하게 하여 유지보수를 보다 쉽게할 수 있습니다.
+
+
+</details>
