@@ -270,3 +270,106 @@ npm run dev
 
 
 </details>
+
+<details>
+<summary>프로젝트 구성</summary>
+
+#### Vue 설치방법
+
+CLI를 사용하면 명령어 하나로 프로젝트를 scaffolding 할 수 있기 때문에 편리합니다.<br><br>
+
+**scaffold**이란?
+- 개발을 용이하게 시작할 수 있는 발판을 제공해주는 것을 의미합니다.
+
+<br>
+CLI로 시작하는 방법은 두 가지가 있습니다. <br>
+
+#### Vue CLI
+Vue CLI는 웹팩 기반 빌드도구입니다. <br>
+하지만, Vue CLI는 현재 유지관리 모드에 있으므로, <br>
+특정 웹팩 기능에 의존하지 않는 한 vite로 새로운 프로젝트를 시작하는 것을 공식문서에선 권장하고 있습니다.
+
+#### Vite
+Vite는 Vue SFC를 지원하고 매우 가볍고 빠른 빌드 도구입니다. <br>
+Vue!의 저자이기도 한 Evan You가 만들었습니다. <br>
+
+- Vite는 개발 서버를 구동할 때 매우 빠릅니다.
+- 소스 코드의 변경이 일어났을 때 전체 모듈을 번들링 하는 것이 아니라, 변경된 모듈만 교체하기 때문에 개발을 더욱 더 빠르게 진행할 수 있습니다.
+
+### vite로 프로젝트 구성하기
+
+다음 명령어를 입력하여 vite로 프로젝트를 구성할 수 있습니다.
+
+```
+npm init vue
+```
+
+해당 명령어로 공식 Vue 프로젝트 스케폴딩 도구인 `create-vue`를 설치하고 실행합니다. <br>
+프로젝트 이름을 설정한 후, 마지막 ESLint(코드 검사기) 외엔 다 no를 선택해줍니다. <br>
+그럼 프로젝트 이름으로 설정한, 디렉터리가 생깁니다. <br>
+이 폴더가 프로젝트 디렉터리입니다. <br>ㅁ
+
+CLI를 통해 해당 디렉터리로 이동하여, 다음 명령어로 의존된 라이브러리를 설치합니다. <br>
+
+```
+npm install
+```
+
+설치 완료 후, 다음 명령어로 실행합니다.
+
+```
+npm run dev
+```
+
+터미널에서 나오는 경로를 통해 Vue로 진입할 수 있습니다.
+
+</details>
+
+<details>
+<summary>ESLint, Prettier</summary>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/12a551fa-661b-4645-ab5e-1eb69b7dec66/image.png">
+</div>
+
+이 사진은 현재 프로젝트의 폴더 구조입니다. <br><br>
+
+맨 마지막의 **vite.config.js**sms vite의 환경 설정파일입니다. <br>
+vite 명령어를 사용할 때 해당 파일을 참고합니다. <br><br>
+
+vite.config.js에서 alias 탭이 있는데, <br>
+왼쪽 항목의 URL의 매개변수를 가리킨다는 의미입니다. <br><br>
+
+```
+'@': fileURLToPath(new URL('./src', import.meta.url))
+```
+
+이렇게 설정되어있는데, `@`이 `./src` 경로를 가리킨다는 의미입니다. <br><br>
+
+현재 디렉터리가 src인데, src안에 component 안에 TheWelcome.vue 파일이 있습니다. <br><br>
+
+만약 이 파일을 import 할 때 <br>
+
+```
+import TheWelcome from './components/TheWelcome.vue'
+```
+
+이렇게 쓸 수도 있지만, 다음처럼 사용할 수도 있습니다.
+
+```
+import TheWelcome from '@/components/TheWelcome.vue'
+```
+
+기본적인 내용은 생략합니다. <br>
+~~(Vue 이전 강의에 다 나오거든요 ㅎㅎ)~~
+
+**public** 디렉터리는 정적 리소스를 담고 있는 디렉터리입니다. <br>
+src 하위의 **asset** 디렉터리는 웹팩이나 vite와 같은 빌드도구의 영향을 받는 이미지나 CSS 등 정적인 리소스를 담는 디렉터리입니다.
+
+그리고 src하위의 **App.vue** 컴포넌트가 루트 컴포넌트입니다.
+
+2분 38초~!
+
+
+</details>
+
