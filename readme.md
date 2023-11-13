@@ -305,9 +305,9 @@ npm init vue
 ```
 
 해당 명령어로 공식 Vue 프로젝트 스케폴딩 도구인 `create-vue`를 설치하고 실행합니다. <br>
-프로젝트 이름을 설정한 후, 마지막 ESLint(코드 검사기) 외엔 다 no를 선택해줍니다. <br>
+프로젝트 이름을 설정한 후, 마지막 ESLint(코드 검사기)와 Prettier외엔 다 no를 선택해줍니다. <br>
 그럼 프로젝트 이름으로 설정한, 디렉터리가 생깁니다. <br>
-이 폴더가 프로젝트 디렉터리입니다. <br>ㅁ
+이 폴더가 프로젝트 디렉터리입니다. <br>
 
 CLI를 통해 해당 디렉터리로 이동하여, 다음 명령어로 의존된 라이브러리를 설치합니다. <br>
 
@@ -366,9 +366,81 @@ import TheWelcome from '@/components/TheWelcome.vue'
 **public** 디렉터리는 정적 리소스를 담고 있는 디렉터리입니다. <br>
 src 하위의 **asset** 디렉터리는 웹팩이나 vite와 같은 빌드도구의 영향을 받는 이미지나 CSS 등 정적인 리소스를 담는 디렉터리입니다.
 
-그리고 src하위의 **App.vue** 컴포넌트가 루트 컴포넌트입니다.
+그리고 src하위의 **App.vue** 컴포넌트가 루트 컴포넌트입니다.<br>
 
-2분 38초~!
+---
+
+### Vue 스타일 가이드
+
+애플리케이션을 개발할 때 코드 컨벤션, 코드 스타일은 협업할 때 굉장히 중요합니다. <br>
+예를 들어, 자바스크립트에서 홑따옴표로 감쌀지, 쌍따옴표로 감쌀지, 명령문 끝에 세미콜론을 넣을지 안 넣을지 등등 <br>
+이러한 규칙을 **스타일**이라고 합니다. <br><br>
+
+Vue의 스타일 가이드는 JavaScript나 HTML에 대한 제한을 최대한 피합니다. <br>
+
+하지만 **뷰 스타일 가이드**에서 제안하고 싶은 점은 <br> 
+뷰로 구현할 때 특정 스타일로 개발을 하게 되면 굉장히 유용하다는 점이 있는데, <br>
+이러한 규칙을 4가지 범주로 나눠서 제안을 하고 있습니다 <br><br>
+
+즉, 뷰로 개발할 때 어떤 점이 좋았다 혹은 어떤 점이 별로였는지 이러한 경험을 알려주는 가이드입니다.<br>
+
+### 규칙 범주 
+
+#### 필수
+- 컴포넌트 이름에 합성어 사용
+  - 예시로 todo라는 것보단, **todo-item**과 같이 합성어로 사용하는 게 좋다고 합니다.
+- Prop 정의
+  - 배열로 간단하게 정의하는 것보다 **객체로 상세하게 정의하는 것**이 좋고, **최소한의 타입은 정하는 것**을 가이드하고 있습니다.
+  - `.eslintrc.cjs` 파일에서 module.exports 하위의 root 하위의 'eslint:recommended' 부분은 ESLint에서 다음과 같이 체크된 부분이 있습니다. <br> 
+  이 부분은 "해당 항목은 자동으로 검사해라"라는 옵션이라고 보시면 됩니다.
+  <div align="left">
+    <img src="https://velog.velcdn.com/images/tjdtn4484/post/a1be217a-8de4-4266-b9ba-92bbe8d9e6a8/image.png">
+  </div>
+- `@vue/eslint-config-prettier` 옵션은 불필요한 규칙 혹은 ESLint 와 Prettier와의 충돌할 수 있는 규칙을 끄는 충돌방지용 옵션입니다.
+
+### ESLint 속성추가
+
+프로젝트 설정처럼 하다보면, '.eslintrc.cjs'이 있습니다. <br>
+커스텀 컨벤션, 룰을 추가하려면 `rules` 속성을 추가해야합니다.
+
+```
+  "rules": {
+    "no-console": "error", // 콘솔 사용시 Error가 발생합니다.
+    "no-console": "warn", // 콘솔 사용시 경고표시가 발생합니다.
+    "no-console": "off", // no-console 옵션 사용을 비활성화합니다.
+    
+  },
+```
+
+참고로 WebStrom을 사용 중인데, 추가해도 에러가 발생하지 않으면, Settings에서 **ESLint**를 검색하여 선택 후, <br>
+**Disable ESLint**로 되어있는 것을 **Manual ESLint configuration**으로 변경하여 적용해주시면 됩니다. 
+
+강의에서는 다음과 같이 설정합니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/0633b516-413a-47d8-947d-2ff02f6db184/image.png">
+</div>
+
+해당 파일들에 ESLint를 적용하고, 저장을 누를 때, 자동으로 ESLint가 적용되는데, 컨텐츠 제작자는 VScode를 통해서 설정합니다. <br>
+하지만, 저는 JetBrain의 WebWtorm을 사용하므로, 위와 같이 적용하려면 다음과 같이 해주시면 됩니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/c7e9d8c8-4a98-4d9c-b594-4dfceda87e67/image.png">
+</div>
+
+settings-ESLint를 검색 후, 선택해주셔서 위와 같이 해주시면 됩니다. <br><br>
+
+이후, main.js 혹은 App.vue에서 저장을 하면 깔끔하게 정리됩니다. <br><br>
+
+그리고 전체 파일을 적용하려면, 터미널을 통해서 다음 명령어를 입력하면 됩니다.
+
+```
+npm run lint
+```
+
+그러면 전체적으로 lint 검사가 진행되는 것을 알 수 있습니다. <br><br>
+
+그리고 ESLint를 적용한다면, Prettier를 비활성화 해줍니다. <br>
 
 
 </details>
