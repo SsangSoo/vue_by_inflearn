@@ -384,13 +384,11 @@ Vue의 스타일 가이드는 JavaScript나 HTML에 대한 제한을 최대한 �
 
 즉, 뷰로 개발할 때 어떤 점이 좋았다 혹은 어떤 점이 별로였는지 이러한 경험을 알려주는 가이드입니다.<br>
 
-### 규칙 범주 
-
-#### 필수
+### 규칙 예시
 - 컴포넌트 이름에 합성어 사용
   - 예시로 todo라는 것보단, **todo-item**과 같이 합성어로 사용하는 게 좋다고 합니다.
 - Prop 정의
-  - 배열로 간단하게 정의하는 것보다 **객체로 상세하게 정의하는 것**이 좋고, **최소한의 타입은 정하는 것**을 가이드하고 있습니다.
+  - 배열로 간단하게 정의하는 것보다 **객체로 상세하게 정의하는 것**이 좋고, 아니라면 최소한 **타입은 정하는 것**을 가이드하고 있습니다.
   - `.eslintrc.cjs` 파일에서 module.exports 하위의 root 하위의 'eslint:recommended' 부분은 ESLint에서 다음과 같이 체크된 부분이 있습니다. <br> 
   이 부분은 "해당 항목은 자동으로 검사해라"라는 옵션이라고 보시면 됩니다.
   <div align="left">
@@ -412,14 +410,18 @@ Vue의 스타일 가이드는 JavaScript나 HTML에 대한 제한을 최대한 �
   },
 ```
 
-참고로 WebStrom을 사용 중인데, 추가해도 에러가 발생하지 않으면, Settings에서 **ESLint**를 검색하여 선택 후, <br>
+참고로 저는 WebStrom을 사용 중인데, 따로 설정을 해야하는 것 같습니다. <br>
+혹여 위의 코드를 추가해도 에러가 발생하지 않으면, Settings에서 **ESLint**를 검색하여 선택 후, <br>
 **Disable ESLint**로 되어있는 것을 **Manual ESLint configuration**으로 변경하여 적용해주시면 됩니다. 
 
-강의에서는 다음과 같이 설정합니다.
+강의에서는 다음과 같이 설정합니다. 
 
 <div align="left">
   <img src="https://velog.velcdn.com/images/tjdtn4484/post/0633b516-413a-47d8-947d-2ff02f6db184/image.png">
 </div>
+
+다음은 ESLint를 적용 후, 파일마다 빨간 줄이 나오는데, 이걸 일일이 적용하기엔 귀찮습니다. <br>
+따라서, 일괄적으로 저장하는 법을 보겠습니다. <br><br>
 
 해당 파일들에 ESLint를 적용하고, 저장을 누를 때, 자동으로 ESLint가 적용되는데, 컨텐츠 제작자는 VScode를 통해서 설정합니다. <br>
 하지만, 저는 JetBrain의 WebWtorm을 사용하므로, 위와 같이 적용하려면 다음과 같이 해주시면 됩니다.
@@ -445,3 +447,111 @@ npm run lint
 
 </details>
 
+<details>
+<summary>Options API VS Composition API</summary>
+
+Vue2는 Options API를 사용했지만, Vue3가 나오면서 Composition API가 나왔고, <br>
+Vue 진영에서도 Composition API를 이용하여 개발하기를 권장하고 있습니다.
+
+#### Option API 스타일
+
+```
+    data() {
+		return {
+			counter: 0,
+		};
+	},
+	methods: {
+		increment() {
+			this.counter++;
+		},
+	},
+	mounted() {
+		console.log('컴포넌트가 마운트 되었습니다');
+	},
+```
+
+위와 같이 상태 데이터는 데이터 안에 선언하고,<br>
+메서드는 메서드 안에 선언하고, <br>
+컴포넌트가 마운트 되었을 때는 마운트 메서드를 선언해서 작성하는 방식입니다. <br>
+
+#### Composition API 스타일
+
+```
+    setup() {
+		const counter = ref(0);
+		const increment = () => counter.value++;
+
+		onMounted(() => {
+			console.log('컴포넌트가 마운트 되었습니다');
+		});
+
+		return {
+			counter,
+			increment,
+		};
+	},
+```
+
+위의 코드와 같이 setup 함수 안에 그룹핑 해놓은 스타일이 컴포지션 API 입니다. <br><br>
+
+Vue 공식문서를 통해서 API의 함수들을 더욱 자세히 확인할 수 있습니다. <br>
+
+### 컴포지션 API가 나온 배경
+
+Optinos API 같은 경우, 데이터, 메서드 등의 코드를 보면 **동일한 논리적 관심사를 처리하는 코드가 분산**이 되어있습니다.<br> <br>
+
+만약 코드가 길어지면, 복잡해져서 스크롤을 한창 아래로 내려야합니다. <br><br>
+
+하지만, 컴포지션 API를 사용하게되면, **동일한 논리적 관심사를 그룹핑**할 수 있습니다.<br>
+코드를 그룹핑함으로써 분석하기 쉽고, 유지보수가 용이해집니다. <br><br>
+
+만약 코드를 다른 곳에서 사용한다면, <br>
+관심사가 동일한 코드를 가지고 유틸 파일로 만들 수 있습니다. <br><br>
+
+하지만 Options API는 코드조각을 일일이 찾아야 됩니다. <br>
+번거롭게요... <br><br>
+
+그리고 Composition API를 사용하면, 동일한 관심사 코드를 그룹핑하고, 추출하여 쉽게 재활용 가능합니다. <br>
+이 때 **관심사를 추출하여 재사용 가능한 코드**를 컴포지션 API에서는 **컴포저블**이라고 부릅니다. <br><br>
+
+컴포저블은 OptionsAPI에서 사용했던 믹스인의 모든 단점을 해결해줍니다. <br>
+또한, <br>
+Vue3의 재사용이 가능한 함수를 활용하면, 믹스인을 사용할 필요도 없습니다.<br><br>
+
+**정리하자면**,<br>
+- 컴포지션 API는 코드 조각을 그룹핑함으로써 분석을 용이하게 합니다.
+- 컴포저블 함수를 사용해서 애플리케이션 전체에서 코드를 매우 쉽게 재사용할 수 있게 해줍니다.
+
+
+### OptionsAPI, CompositionAPI의 관계
+
+- CompositionAPI는 OptionsAPI의 대부분의 기능을 대체합니다. 
+  - 하지만, 경우에 따라 필요한 경우 OptionsAPI를 사용해야 할 수도 있습니다.
+
+- OptionsAPI, CompositionAPI를 같이 사용할 수도 있습니다.
+  - 기존 OptionsAPI로 개발을 했지만, Composition API의 기능이 필요한 경우에만 사용하는 것이 좋습니다.
+  - 새로운 프로젝트를 진행할 떄는 CompositionAPI를 기반으로 개발하는 것이 좋습니다.
+
+비교하기 좋은 사이트는 다음과 같습니다. <br>
+[뷰 3 공식문서](https://vuejs.org/)입니다.
+
+해당 사이트에서 Docs의 Guide를 선택합니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/b116b526-dd97-4299-be02-dc3c38a985b5/image.png">
+</div>
+
+
+그리고, 왼쪽 상단의 **Options** 혹은 **Composition** 토글을 통해서 두 API 방식을 비교할 수 있습니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/7f42a891-b794-46b3-866e-7ee4f26ee209/image.png">
+</div>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/aa26cf22-d7ff-4c14-be26-f3386c7d80e7/image.png">
+</div>
+
+
+</details>
