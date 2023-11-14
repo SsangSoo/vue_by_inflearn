@@ -1020,5 +1020,483 @@ type: 'text',
 
 이처럼 JavaScript 표현식도 가능합니다.
 
+</details>
 
+<details>
+<summary>반응형 기초(Reactivity)</summary>
+
+자바스크립트 객체에서 반응형 상태를 생성하기 위해서 `reactive()` 함수를 사용할 수 있습니다. <br>
+리액티브 함수에 객체를 넣음으로 반응형 상태를 선언할 수 있습니다. <br>
+이 때 반환되는 데이터를 반응형 객체라고 하고, 반응형 객체가 변경되면 바인딩된 화면도 자동으로 업데이트 됩니다. <br><br>
+
+```
+<template>
+	<div>
+		<button v-on:click="increment()">Click {{ state.count }}</button>
+	</div>
+</template>
+
+<script>
+import { reactive } from 'vue';
+
+export default {
+	setup() {
+		const state = reactive({
+			count: 0,
+
+		});
+		const increment = () => {
+			state.count++;
+		};
+		return {
+			state,
+			increment,
+		};
+	},
+};
+</script>
+```
+
+반응형은 Depth가 깊어도 제대로 동작을 합니다.<br>
+
+```
+
+    ...
+    
+    <button v-on:click="increment()">Click {{ state.count }}</button>
+    <button v-on:click="increment()">Deep Click {{ state.deep.count }}</button>
+
+    ...
+
+    export default {
+        setup() {
+            const state = reactive({
+                count: 0,
+                deep: {
+                    count: 0,
+                },
+            });
+            const increment = () => {
+                state.count++;
+                state.deep.count++;
+            };
+            return {
+                state,
+                increment,
+            };
+        },
+};
+	...
+```
+
+아래는 해당 코드의 결과입니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/d8c3b64a-82a8-48e2-b67c-6198fd6678d3/image.png">
+</div>
+
+이처럼 얕은 Depth부터 깊은 Depth까지 반응형으로 동작하는 것을 확인할 수 있습니다. <br><br>
+
+OptionsAPI에서는 data라는 옵션의 객체를 return해서 선언하는데, 내부적으로 반환된 객체는 reactive로 감싸진다는 것을 참고하시면 될 거 같습니다.<br><br>
+
+**reactive**함수는 객체나 배열과 같은 **레퍼런스 타입을 반응형 객체로 만들 수 있습니다.** <br><br>
+
+그럼 string, number, boolean과 같은 기본형을 반응형 데이터로 만드려면 어떻게 해야할까요? <br>
+이에 대해 알아보겠습니다. <br>
+
+```
+<template>
+	<div>
+		<p>{{ message }}</p>
+		<button v-on:click="addMessage">add click</button>
+	</div>
+</template>
+
+<script>
+import { reactive } from 'vue';
+
+export default {
+	setup() {
+		let message = reactive('Hello Vue!');
+		const addMessage = () => {
+			message = message + '!';
+		};
+		return {
+			message,
+			addMessage,
+		};
+	},
+};
+</script>
+```
+
+해당 코드의 결과는 다음과 같습니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/d773696b-af43-4337-be5f-8964044c7111/image.png">
+</div>
+
+그런데, 반응형으로 동작하지 않는다는 것을 확인할 수 있습니다. <br>
+그 이유는 **reactive함수**는  객체나 배열과 같이 레퍼런스 타입의 반응형 상태, 반응형 객체를 선언하는 함수이기 때문입니다. <br>
+
+```
+console.log('message :', message);
+console.log('message typeof :', typeof message);
+```
+
+해당 코드를 넣고, 확인을 해보면, 
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/681c8032-2c5d-42ab-8a2b-e2bd6d11d679/image.png">
+</div>
+
+string 타입임을 확인할 수 있습니다. <br><br>
+
+return하는 message 값과 템플릿에서 사용되는 message 값이 메모리 주소를 가지고 서로 공유를 해야하는데, <br>
+기본형 특성상 값 자체가 바뀜으로써 메모리를 통해서 공유되지 않습니다. <br>
+그렇기 때문에, 당연히 반응형으로 동작하지 않습니다. <br><br>
+
+만약에 기본형을 반응형으로 다루려면, 이미 약속된 속성을 선언하고, 내부에 선언해야합니다. <br>
+
+```
+setup() {
+  let message = reactive({
+    value: 'Hello Vue!',
+  });
+  const addMessage = () => {
+    message.value = message.value + '!';
+  };
+}
+```
+
+위의 코드처럼 작성하면 됩니다. <br>
+그러나 이는 결국 Primitive 타입 즉, 기본형이 아니라 객체를 선언한 것입니다. <br><br>
+
+따라서 반응형 API에서는 기본형을 선언할 수 있는 ref함수를 제공합니다. <br>
+
+### ref
+`reactive()` 함수는 객체타입에만 동작합니다.<br>
+반면에, `ref()` 함수는 기본타입을 반응형으로 만들 수 있는 반응형 API입니다. <br><br>
+
+ref 함수를 사용하려면, <br>
+다음과 같이 ref 내부에 Primitive 타입을 넘기면 됩니다. <br><br>
+
+```
+const count = ref(0);
+```
+
+그러면, 반응형 데이터를 반환하게 됩니다. <br>
+이 ref로 반환된 반응형 데이터는 **변이 가능한 (mutable) 객체**를 반환합니다.<br>
+이 객체 안에는 `value`라는 하나의 속성만 포함하는데, <br>
+value라는 속성은 매개변수로 던졌던 Primitive 타입을 가지고 있습니다.<br>
+(위의 코드로 보면 0입니다.) <br><br>
+
+이 반응형 객체는 value값에 참조역할을 하는 것입니다. <br>
+
+결론적으로 ref함수로 기본형타입을 선언하게 되면, 내부적으로 value라는 값을 가지게 되고, <br>
+`.value`를 선언하지 않더라도 ref함수로 선언된 값은 내부의 `.value`값을 호출한다고 보면 될 거 같습니다.
+
+```
+<template>
+	<div>
+		<p>{{ message }}</p>
+		<button v-on:click="addMessage">add click</button>
+	</div>
+</template>
+
+<script>
+import { ref } from 'vue';
+
+export default {
+	setup() {
+		let message = ref('Hello Vue!');
+		const addMessage = () => {
+			message.value = message.value + '!';
+		};
+		console.log('message :', message.value);
+		console.log('message typeof :', typeof message.value);
+		return {
+			message,
+			addMessage,
+		};
+	},
+};
+</script>
+```
+
+위의 코드에서 message를 ref함수로 선언했지만, <br>
+템플릿에서는 `message.value`가 아닌 `message`를 이중괄호문으로 호출했습니다.  <br><br>
+
+그리고 잘 반응합니다. <br>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/c2c30a16-61a5-4d5c-80d1-25396c604ebf/image.png">
+</div>
+
+
+그리고, 콘솔로 확인하면, message 내부의 value값이 래핑된 것을 확인할 수 있습니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/ba2b0556-eec7-4106-80b9-280ec15e2ac7/image.png">
+</div>
+
+<br>
+
+그리고 크롬에서 Vue devtools를 보면 다음과 같이 ref 함수로 선언한 것은 Ref의 표시가 나오고, 편집이 가능하도록 연필 모양이 나옵니다.<br>
+<br>
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/649b0024-7e9e-4d0e-8a0a-f32d16b57b03/image.png">
+</div>
+
+#### ref함수를 reactive의 객체를 정의할 때 속성으로 넣게되면?
+
+```
+const count = ref(0);
+const state = reactive({
+  count
+ })
+```
+
+이처럼 ref함수를 reactive의 객체를 정의할 때 속성으로 넣게되면 어떻게 될까요? <br><br>
+
+이에 대해 알아보도록 하겠습니다.<br>
+
+```
+const count = ref(0);
+const state = reactive({
+    count,
+});
+console.log(count.value);
+// console.log('state.count : ', state.count.value); // undefined
+console.log('state.count : ', state.count);   // 0
+```
+
+ref로 선언한 데이터를 반응형 객체의 속성으로 주입하게 되면,  <br>
+자동으로 해당 데이터의 value는 언래핑되어 사라집니다. <br>
+그래서 일반 속성을 사용하는 것처럼 사용할 수 있습니다. <br>
+그리고 반응형은 여전히 연결되어 있습니다.
+
+```
+const count = ref(0);
+const state = reactive({
+    count,
+});
+count.value++;
+count.value++;
+console.log(count.value); // 2
+console.log('state.count : ', state.count); // 2
+```
+
+이와 같이 count.value의 값이 증가함에 따라, <br>
+state.count도 증가한 것을 확인할 수 있습니다. <br><br>
+
+배열에선 조금 다릅니다.
+
+```
+// ref -> Array
+const message = ref('Hello');
+const arr = reactive([message]);
+console.log('arr[0]: ', arr[0]);
+console.log('arr[0].value: ', arr[0].value);
+```
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/80bcc2cd-5b3d-4254-9e82-cc80231d1e5d/image.png">
+</div>
+
+배열을 통해서 접근하려면, `.value`를 통해서 접근해야합니다.<br>
+반응형 상태를 객체로 넣으면 `.value`를 붙이지 않아도 되지만, <br>
+반응형 상태를 배열로 넣으면 배열에 접근하기 위해서 `.value`를 붙이면 됩니다. <br><br>
+
+### 반응형 상태 구조 분해하기(Destructuring)
+
+객체의 몇몇 속성을 사용하고 싶을 때, ES에서 구조 분해 할당을 사용하면 되는데,<br>
+반응형 객체에서 구조분해 할당을 하게 되면 해당 속성들은 반응형을 잃게 됩니다. <br><br>
+
+```
+<template>
+	<div>
+		<p>author: {{ author }}</p>
+		<p>title: {{ title }}</p>
+	</div>
+</template>
+
+<script>
+import { reactive } from 'vue';
+
+export default {
+	setup() {
+		const book = reactive({
+			author: 'Vue Team',
+			year: '2020',
+			title: 'Vue 3 Guide',
+			description: '당신은 이 책을 지금 바로 읽습니다 ;)',
+			price: '무료',
+		});
+
+		const { author, title } = book;
+		console.log(typeof author);
+		return { author, title, book };
+	},
+};
+</script>
+```
+
+위와 같은 코드가 있을 때, <br>
+크롬 브라우저의 확장 프로그램인 Vue devtools를 확인해보면, <br>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/75b357c2-5b78-47a0-8b4c-baf6497ff8d6/image.png">
+</div>
+
+이처럼 book은 reactive로 선언했기 때문에, 반응형이 살아있습니다. <br>
+하지만, 구조분해할당으로 선언된 author, title은 변경할 수 없고, 콘솔을 통해 확인해보면, 그냥 string타입임을 확인할 수 있습니다. <br>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/4c5a3f49-c556-4152-8ad8-6b575aabdcee/image.png">
+</div>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/b0362de8-3714-4b62-8154-391593bd1626/image.png">
+</div>
+
+그럼 반응성을 잃지 않으면서 구조분해할당을 할 수는 없을까... <br>
+그 방법은 **toRef(), toRrefs() API**를 사용하면 됩니다.  <br>
+
+```
+const { author, title } = book        // 밑에처럼 변경
+const { author, title } = toRefs(book);
+```
+
+toRefs(book)으로 값을 변경하면, 반응형 데이터가 됩니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/dada99fd-9068-4a54-ac78-8fb5227285ff/image.png">
+</div>
+
+이처럼 Ref가 붙은 것을 확인할 수 있고, <br>
+값을 변경할 수 있겠죠..? <br><br>
+
+toRefs()를 사용하게 되면 book에 있는 속성과 구조분해해서 재할당한 반응형 상태는 동기화가 됩니다.<br>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/926817c9-ad06-463a-83f4-24b47ace5386/image.png">
+</div>
+
+저는 위의 author 데이터를 바꿨지만, book 내부의 author의 값도 바뀌었습니다. <br>
+<br>
+만약 구조분해할당이 아니라, 객체에서 하나만 가져오고 싶다면, `toRef()`를 사용하면 됩니다.<br>
+
+```
+const author = toRef(book, 'author');
+```
+
+이처럼 속성하나만 선언하고, toRef의 첫 번째 매개변수에는 객체, 두 번째 매개변수에는 객체의 내부 값을 가지고 선언하면 됩니다. <br>
+
+따라서 구조분해할당으로 가져온 데이터가 반응형을 잃지않도록 하려면, toRef, toRefs를 사용하면 됩니다. <br><br>
+
+### readonly
+
+readonly를 이용하면 반응형 객체의 변경을 방지할 수 있습니다. <br>
+
+```
+const original = reactive({ count: 0 });
+
+const copy = readonly(original);
+
+original.count++;
+
+copy.count++;
+```
+
+위와 같이 readonly를 통해서 original의 값을 복사하여 copy로 선언하면,<br>
+original.count 즉 원본 값은 변경할 수 있지만, <br> 
+복사본인 copy.count는 변경할 수 없습니다. <br><br>
+
+예를 들어, 컴포넌트 A와 B가 있을 때, <br>
+A의 컴포넌트에서 사용한 반응형 상태가 B 컴포넌트에서도 필요합니다. <br>
+A 컴포넌트에서 B 컴포넌트에 반응형 데이터를 주입해줄 수 있는데, <br>
+B 컴포넌트에서 데이터를 변경하면, 원본이 있는 A 컴포넌트도 동기화되어 변경됩니다.<br>
+이러한 경우 readonly를 이용해서 변경불가능한 객체를 만들어서 B 컴포넌트로 주입하면 됩니다. <br><br>
+
+```
+<script>
+import { reactive, readonly } from 'vue';
+
+export default {
+	setup() {
+		const original = reactive({
+			count: 0,
+		});
+		original.count++;
+		console.log(original.count);
+
+		return {};
+	},
+};
+</script>
+```
+
+콘솔에서 1이 출력됨을 확인할 수 있습니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/520a795d-d15d-42d2-a415-9f8c5018f43a/image.png">
+</div>
+
+readonly를 사용하여 콘솔을 출력하면 다음과 같습니다.
+
+```
+const original = reactive({
+    count: 0,
+});
+const copy = readonly(original);
+original.count++;
+console.log('original.count : ', original.count);
+console.log('copy.count : ', copy.count);
+```
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/520a795d-d15d-42d2-a415-9f8c5018f43a/image.png">
+</div>
+
+만약 copy.count를 변경하려 하면, 해당 값은 readonly 이기 때문에, 변경할 수 없다는, 것을 확인할 수 있습니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/87d06188-1626-4bda-8845-ff987a1b72db/image.png">
+</div>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/c9ae67b5-8d5f-4a8e-b0ab-36451d30cba3/image.png">
+</div>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/484de383-b8a7-4747-af4c-df457928ff67/image.png">
+</div>
+
+
+#### Reactivity Transform : 실험적인 단계
+
+위에서 본 것처럼 refs와 함께 `.value`를 사용하는 것은 JavaScript의 언어 제약으로 인한 단점입니다. <br>
+기본형 타입을 참조형 타입으로 다루기 때문입니다. <br>
+뷰3에서는 compile-time transforms를 사용하여 적절한 위치에 `.value`를 자동으로 추가해서 불편함을 개선하려고 하고 있습니다.
+
+`$`를 활용하는데, 
+
+```
+let const = $ref(0);
+
+function increment() {
+  count++;
+}
+```
+
+이처럼 `$`를 이용해서 기본형을 ref 안에 선언했지만, <br>
+increment의 내부에 `count.value`가 아닌, `count`만 선언한 것을 확인할 수 있습니다. <br><br>
+
+실험적인 단계이므로, 바로 사용할 수 없겠지만, 참고하면 될 거 같습니다!! <br>
+
+</details>
+
+<details>
+<summary>Computed</summary>
 </details>
