@@ -805,8 +805,220 @@ Setup 함수의 첫 번째 매개변수로 props가 넘어온다는 정도로 �
   
 <br> 이러한 기능들도 추후에 배웁니다 ^^
 
+</details>
 
 
+<details>
+<summary>템플릿 문법</summary>
+
+### 텍스트 보간법
+텍스트 보간법은 데이터 바인딩의 가장 기본형태로 `{{ data }}` 처럼 이중 중괄호(콧수염 괄호라고도 불립니다.)를 사용하는 것입니다. <br><br>
+이중중괄호({{}})를 활용하여, 데이터에 바인딩할 수 있습니다. <br><br>
+
+그러면 script 태그 안의 값이 변경됨에 따라, 템플릿에서 보여지는 값도 변경됩니다. <br><br>
+
+만약에 한 번만 렌더링을 하고 데이터가 변경되지 않도록 하려면, **v-once**라는 디렉티브를 사용하면됩니다. <br><br>
+
+잠깐! 여기서 **디렉티브**란? <br>
+`v-`와 같은 prefix가 붙는 특수한 속성입니다. <br>
+디렉티브는 엘리먼트 혹은 컴포넌트에게 행동을 지시하는 것을 말합니다.<br><br>
+
+`v-once`는 **일회성으로만 보관하고, 갱신해도 변경하지 말라**는 기능이 있는 디렉티브입니다.<br><br>
+
+```
+<template>
+  <h2>보간법</h2>
+		<p>{{ message }}</p>
+		<p v-once>{{ message }}</p>
+		<button v-on:click="message = message + '!'">Click!</button>
+</template>
+<script>
+import { ref } from 'vue';
+
+export default {
+	setup() {
+		const message = ref('안녕하세요!');
+		return {
+			message,
+		};
+	},
+};
+</script>
+```
+
+위와 같이 있을 때, <br>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/5e80105b-fb0e-4359-ab5d-5646a00533b7/image.png">
+</div>
+
+`v-once`가 적용된 곳은 처음과 같지만, 그냥 바인딩된 곳에는 느낌표가 많이 붙은 것을 확인할 수 있습니다. <br>
+
+### 이중중괄호({{}})
+이중중괄호는 데이터를 HTML이 아닌, 일반 텍스트로 해석합니다. <br>
+실제 html을 출력하려면, `v-html` 디렉티브를 사용해야합니다. <br><br>
+
+```
+  ...
+
+  <h2>v-html</h2>
+  <p>{{ rawHtml }}</p>
+  <p v-html="rawHtml"></p>
+
+  ... 
+
+Setup() {
+  const rawHtml = ref('<strong>안녕하세요</strong>');
+  
+  ... 
+  
+  return {
+    rawHtml,
+  }
+}
+
+```
+
+위와 같이 있을 때, 다음과 같이 나타납니다. <br> 
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/bfdaaadb-6910-4bb9-b99d-d32600a3e776/image.png">
+</div>
+
+<br><br>
+
+### v-html
+`v-html` 디렉티브를 사용하면, 태그 내에 아무것도 선언하지 않고, 디렉티브의 값으로만 주면 해당 태그가 템플릿에 적용됩니다. <br><br>
+
+```
+<p v-html="rawHtml"></p>
+```
+
+#### v-html 주의점
+`v-html`을 실무에서 사용하게 되면, HTML을 동적으로 웹사이트에서 렌더링하게 되는데 **XSS 취약점(크로스 사이트 스크립팅)**에 위험해집니다. <br>
+<br>
+**XSS 취약점(크로스 사이트 스크립팅)**은 웹사이트에서 악성 스크립트를 삽입할 수 있는 취약점입니다.<br>
+따라서, 관리자가 입력하는 컨텐츠거나, 혹은 신뢰할 수 있는 컨텐츠에서만 사용을 하고, <br>
+사용자가 제공하는 컨텐츠에서는 사용하지 않는 것을 권장합니다.<br><br> 
+
+### 속성 바인딩(v-bind)
+속성을 바인딩할 때는 `v-bind` 디렉티브를 사용할 수 있습니다.<br>
+
+```
+<div v-bind:title="dynamicTitle">
+	마우스를 올려보세요. 마우스가 올라가면 보여요!
+</div>
+
+ ...
+ 
+ const dynamicTitle = ref('안녕하세요!!!!');
+ 
+ ...
+ 
+ return {
+			dynamicTitle,
+  }
+```
+
+그리고 마우스를 올려보면 다음과 같이 나옵니다. <br>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/3740a83c-5d58-4e3e-84d9-547c5ceb410b/image.png">
+</div>
+
+<br>
+
+```
+  ...
+  
+  <input type="text" value="홍길동" v-bind:disabled="isInputDisabled" />
+  
+  ...
+
+  const isInputDisabled = ref(false);
+  const isInputDisabled = ref(true);
+  
+  ...
+```
+
+위와 같이 작성하게되면, isInputDisabled의 값이 true이냐 false이냐에 따라, <br>
+input 값이 수정될 수도 있고, 안 될 수도 있습니다. <br><br>
+
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/d648f7ac-54e4-4ba5-9e1e-b9f37f9b519b/image.png">
+</div>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/54657829-aa9d-446e-85fd-a87b3e38d12e/image.png">
+</div>
+
+그리고 `v-bind`는 단축 속성을 지원합니다! <br><br>
+
+`v-bind:` 이렇게 사용해도 되고, <br>
+`:` 이와 같이 콜론(:)만 사용해도 됩니다! <br><br>
+
+앞으로의 수업은 단축 속성을 사용한다고 합니다.^^ <br><br>
+
+그리고 `v-bind`는 여러 개의 속성을 한 번에 바인딩할 수 있습니다. <br>
+다중 속성을 객체로 한 번에 바인딩할 수 있습니다. <br>
+
+```
+
+...
+  <input v-bind="attr" />
+...
+
+  const attr = ref({
+			type: 'password',
+			value: '12345678',
+			disable: false,
+		});
+		
+...
+ 
+  return {
+			attr,
+
+```
+
+위와 같이 한 번에 정의하여 사용할 수 있습니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/bcd7d52c-3e0b-4511-86ab-85268e19d9a3/image.png">
+</div>
+
+현재 비밀번호가 잘 들어간 것을 확인할 수 있습니다.
+<br>
+
+```
+type: 'text',
+```
+
+타입을 text로 바꾸면 다음과 같이 됩니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/00f5643d-86b8-4a2a-9ec3-cc9fcb829661/image.png">
+</div>
+
+이렇게 다중 속성을 바인딩할 수 있습니다.
+
+### 이중괄호 안의 자바스크립트 표현식
+이중괄호문에서는 데이터 뿐만 아니라, 자바스크립트 표현식도 가능합니다. <br>
+
+```
+		<h2>JavaScript</h2>
+		{{ message.split('').reverse().join('') }} <br />
+		{{ isInputDisabled ? '예' : '아니오' }}
+```
+
+아래는 결과입니다. <br>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/1cc770bc-bd02-4fa8-b26f-5f03a98ffde3/image.png">
+</div>
+
+이처럼 JavaScript 표현식도 가능합니다.
 
 
 </details>
