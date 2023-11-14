@@ -555,3 +555,258 @@ Vue3의 재사용이 가능한 함수를 활용하면, 믹스인을 사용할 �
 
 
 </details>
+
+<details>
+<summary>Composition API</summary>
+
+컴포지션 API는 성격에 따라 **반응형 API**, **라이프 사이클 Hook**, **종속성 주입** 으로 구분됩니다.<br><br>
+
+
+### 반응형 API
+- 말 그대로 반응하는 데이터와 관련된 API 세트라고 보시면 됩니다. <br><br>
+
+#### 반응형이란?
+
+다음과 같이 App.vue 코드를 작성합니다.<br><br>
+
+
+```
+<template>
+	<div>
+		<h2>반응형 메시지</h2>
+		<p>{{ reactiveMessage }}</p>
+		<h2>일반 메시지</h2>
+		<p>{{ normalMessage }}</p>
+	</div>
+</template>
+
+<script>
+import { ref } from 'vue';
+
+export default {
+	setup() {
+		const reactiveMessage = ref('Hello Reactive Message');
+		const normalMessage = 'Hello Nomal Message';
+
+		return {
+			reactiveMessage,
+			normalMessage,
+		};
+	},
+};
+</script>
+
+<style lang="scss" scoped></style>
+
+```
+
+그럼 다음과 같이 나올 것입니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/a497ab54-2a2f-4a59-b737-6e48fb9765c9/image.png">
+</div>
+
+그리고 버튼을 누르면, `!`를 추가하는 코드를 작성해보겠습니다.<br><br>
+
+```
+		<h2>반응형 메시지</h2>
+		<p>{{ reactiveMessage }}</p>
+		<button v-on:click="addReactiveMessage">Add Message</button>
+		<h2>일반 메시지</h2>
+
+		...
+		
+		const reactiveMessage = ref('Hello Reactive Message');
+		const addReactiveMessage = () => {
+			reactiveMessage.value = reactiveMessage.value + '!';
+		};
+		const normalMessage = 'Hello Nomal Message';
+
+		return {
+			reactiveMessage,
+			normalMessage,
+			addReactiveMessage,
+		};
+...
+
+<style lang="scss" scoped></style>
+```
+
+그리고 메세지를 클릭해보면, <br><br>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/0cb12eba-3746-4d52-86d4-c4e225e63ab1/image.png">
+</div>
+
+위 그림처럼 느낌표가 붙습니다.(3번을 눌렀기 때문입니다.) <br><br>
+
+선언했던 `reactiveMessage`이 반응형 메세지였는데, <br>
+이 **반응형 메세지의 상태가 변경됨**에 따라, **UI도 함께 변경**되는 것을 확인할 수 있습니다. <br><br>
+
+그 이유는 ref API를 사용했기 때문입니다.<br><br>
+
+반면에, 일반메세지는 어떻게 될까요? <br><br>
+
+다음과 같이 코드를 작성합니다.<br><br>
+
+```
+  ...
+        <h2>일반 메시지</h2>
+		<p>{{ normalMessage }}</p>
+		<button v-on:click="addNomalMessage">Add Message</button>
+  
+  ...
+        const normalMessage = 'Hello Nomal Message';
+        const addNomalMessage = () => {
+            addNomalMessage.value = addNomalMessage.value + '!';
+        };
+
+		return {
+			...
+			addReactiveMessage,
+			addNomalMessage,
+  ...
+```
+
+그러면 다음과 같이 나오는데, <br>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/d86ca3c5-35f5-472a-824f-db10e5e4f31c/image.png">
+</div>
+
+위 그림은 버튼을 몇 번 클릭한 모습입니다.<br><br>
+
+이 말인 즉슨, 반응형 메시지가 아니라면,  <br>
+음... 네... <br>
+
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/edffdb4b-5995-4394-9e73-ae9420234bbd/image.png">
+</div>
+
+그렇습니다..
+
+이처럼 반응형 API는 반응형 데이터를 선언하거나, 혹은 <br>
+그와 관련된 일을 하는 API입니다.<br><br>
+
+
+```
+isRef() // 반응형인지 확인하는 문법
+```
+
+콘솔을 통해서 반응형인지 아닌지를 보도록 하겠습니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/9da7c4ca-0fb7-4100-bb40-93f4d444ee85/image.png">
+</div>
+
+결과는 위 그림과 같습니다.
+따라서 반응형 API란 **반응형과 관련된 일을 하는 API다**라고 보시면 됩니다.
+
+
+### 라이프 사이클 Hook
+
+Vue 인스턴스나 컴포넌트가 생성될 때, 미리 사전에 정의된 몇 단계의 과정을 거치게 되는데 이를 **라이프 사이클(Lifecycle)**이라고 합니다. <br>
+라이프사이클 단계에서 실행되는 함수를 **라이프 사이클 훅**이라고 합니다.<br><br>
+
+예를 들어 어떠한 코드를 컴포넌트가 DOM에 마운트 되기 전에 넣고 싶거나, 혹은 마운트된 후에 넣고 싶을 때, <br>
+onBeforeMount, onMounted와 같은 API를 사용할 수 있습니다.
+
+
+### 종속성 주입
+
+해당 내용은 추후에 다룹니다.
+
+</details>
+
+<details>
+<summary>Setup 함수</summary>
+
+Setup() 함수(hook)은 Composition API 사용을 위한 진입점 역할을 합니다. <br>
+
+Setup 함수는 라이프 사이클 다이어그램을 보면, 컴포넌트 인스턴스가 생성되기 전에 실행되는 Hook이라고 볼 수도 있습니다. <br>
+<br>
+Setup 함수 안에 반응형 상태, 메서드를 선언하고, 객체로 반환하게 되면 템플릿에 노출할 수 있습니다.<br>
+
+```
+<template>
+	<div>
+		<p>
+			{{ counter }} // return문 안에 있음. 사용 가능
+		</p>
+		<p>
+			{{ message }} // return문 안에 없음. 사용 불가
+		</p>
+	</div>
+</template>
+
+<script>
+import { ref } from 'vue';
+
+export default {
+	setup() {
+		const counter = ref(0);
+		const message = ref('Hello Vue3');
+		return {
+			counter,
+		};
+	},
+};
+</script>
+```
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/e350b359-e098-49fc-ba98-06473255c78e/image.png">
+</div>
+
+이처럼 return 문 안에 있냐 없냐에 따라 템플릿 내에서 사용할 수도 있고, 사용하지 못할 수도 있습니다.<br>
+이는 변수 뿐만 아니라, 메서드도 마찬가지입니다. <br><br>
+
+템플릿 뿐만 아니라, 컴포넌트 인스턴스에서도 사용할 수 있습니다.<br>
+
+```
+<script>
+import { ref } from 'vue';
+
+export default {
+	setup() {
+		const counter = ref(0);
+		const message = ref('Hello Vue3');
+		return {
+			counter,
+		};
+		
+		mounted() {
+		  console.log(this.counter) // 0
+		}
+	},
+};
+</script>
+```
+
+위와 같이 mounted 안에서 this 키워드를 이용하여 접근할 수 있습니다. <br>
+(참고로 이 부분은 OptionsAPI입니다.) <br><br>
+
+
+- props
+그리고 Setup 함수의 첫 번째 매개변수는 props입니다. <br>
+**props**는 추후에 다룹니다.^^<br>
+Setup 함수의 첫 번째 매개변수로 props가 넘어온다는 정도로 알고 가면 됩니다. <br>
+
+- Setup Context
+두 번째 매개변수로는 Setup Context 객체입니다.<br>
+컨텍스트 객체는 Setup 함수 내에서 유용하게 사용할 수 있는 속성을 갖고 있습니다. <br><br>
+
+속성은 다음과 같이 있습니다. 
+- context.attrs
+- context.slots
+- context.emit
+- context.expose
+  
+<br> 이러한 기능들도 추후에 배웁니다 ^^
+
+
+
+
+
+</details>
