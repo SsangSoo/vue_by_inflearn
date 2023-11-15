@@ -1499,4 +1499,257 @@ increment의 내부에 `count.value`가 아닌, `count`만 선언한 것을 확�
 
 <details>
 <summary>Computed</summary>
+
+템플릿 문법( {{ }} )은 간단히 사용하면 매우 편리합니다. <br>
+하지만, 템플릿 내 표현식 코드가 길어질 경우 가독성이 떨어지고 유지보수가 어려울 수 있습니다. <br><br>
+
+이럴 때 사용하는 반응형 API가 **computed입니다**. <br>
+computed를 사용하면 computed 안에 콜백 함수를 정의함으로써, return 되는 값을 속성으로 읽기 전용 속성으로 사용할 수 있습니다.<br><br>
+
+```
+<template>
+	<div>
+		<h2>{{ teacher.name }}</h2>
+		<h3>강의가 있습니까?</h3>
+		<p>{{ teacher.lecture > 0 ? '있음' : '없음' }}</p>
+	</div>
+</template>
+
+<script>
+import { reactive } from 'vue';
+
+export default {
+	setup() {
+		const teacher = reactive({
+			name: '짐코딩',
+			lecture: ['HTML/CSS', 'JavaScript', 'Vue3'],
+		});
+		return {
+			teacher,
+		};
+	},
+};
+</script>
+```
+
+위의 코드 중 `{{ teacher.lecture > 0 ? '있음' : '없음' }}` << 이 부분이 길어지고, 이러한 코드를 여러 번 사용한다면, 비효율적입니다. <br>
+이 때 사용하는 것이 computed 함수입니다. <br>
+
+```
+<template>
+  <p>{{ hasLecture }}</p>
+</template>
+
+<script>
+const hasLecture = computed(() => (teacher.lecture > 0 ? '있음' : '없음'));
+</script>
+```
+
+이렇게 computed를 사용하면 조금더 템플릿 문법이 간결해질 수 있습니다. <br>
+그런데, 아래와 같이 똑같은 기능을 하는 메서드를 다음과 같이 선언하면 어떻게 될까요? <br>
+
+```
+<p>{{ existLecture() }}</p>
+
+const existLecture = () => (teacher.lecture > 0 ? '있음' : '없음');
+```
+
+결과적으로는 같은 기능을 수행하므로, 결과가 같습니다. <br>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/946e9adb-e993-46b1-afd6-ff1c03fd057e/image.png">
+</div>
+
+똑같지만, 성능면에서는 computed를 사용하는 것이 더욱 좋습니다.<br>
+왜냐하면, computed는 계산된 값이 캐싱되기 때문입니다. <br><br>
+
+```
+<template>
+    <p>{{ hasLecture }}</p>
+    <p>{{ hasLecture }}</p>
+    <p>{{ existLecture() }}</p>
+    <p>{{ existLecture() }}</p>
+</template>
+<script>
+    const hasLecture = computed(() => {
+        console.log('computed'); // 출력
+        return teacher.lecture > 0 ? '있음' : '없음';
+    });
+    const existLecture = () => {
+        console.log('method');    // 출력
+        return teacher.lecture > 0 ? '있음' : '없음';
+    };
+</script>
+```
+
+위와 같이 선언되어있을 때, <br>
+콘솔창을 확인해보면, 
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/a7877ab0-1e5b-494c-9b1c-0bf9d2959654/image.png">
+</div>
+
+이렇게 그냥 함수는 두번을 출력하지만, computed 를 사용한 곳은 한 번만 출력한 것을 확인할 수 있습니다. <br>
+참고로 UI 결과는 다음과 같습니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/fc81af43-21d6-4f63-b965-6cd905d5cfee/image.png">
+</div>
+
+그리고, 캐시가 다시 계산되는 시점은 <br>
+**반응형 데이터가 변경되는 시점**입니다. <br><br>
+
+그리고 Vue devtools에서 '더 보기'에서 `Highlight updates`를 켜주면, 
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/f0f8b955-8589-41b7-a868-faa35bb9dc42/image.png">
+</div>
+
+아래와 같이 highlight가 생기는 것을 확인할 수 있습니다.<br>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/8659dcd8-70e9-4f25-952d-aa9ead91281a/image.png">
+</div>
+
+그러면 rendering 될 때마다, highlight 안의 값들을 다시 불러오는데, <br>
+아래와 같이 버튼을 누르면, 데이터가 갱신됩니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/73ec17fa-d39a-482a-ad2a-2b5bcb0a8e32/image.png">
+</div>
+
+그런데 아래를 보시면, computed는 한번만 출력되고, 함수만 출력되는 것을 확인할 수 있습니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/4e8cf655-28b3-4ccc-bb0b-7511f97ce564/image.png">
+</div>
+
+그 이유는 아까 말한 것처럼, computed는 캐싱을 사용하기 때문입니다. <br><br>
+
+그리고 computed는 기본적으로 getter전용입니다.<br>
+계산된 속성에 새 값을 할당하려고 하면 런타임 경고가 표시됩니다! <br>
+computed에서 새 값을 할당할 필요가 있을 경우에은 getter와 setter함수를 사용해서 쓰기가 가능한 속성을 만들 수 있습니다. <br><br>
+
+
+```
+<template>
+		<h2>이름</h2>
+		<p>{{ fullName }}</p>
+</template>
+
+<script>
+	const firstName = ref('홍');
+    const lastName = ref('길동');
+
+    const fullName = computed(() => firstName.value + ' ' + lastName.value);
+</script>
+
+```
+
+이처럼 '홍 길동'이 출력되는 것을 확인할 수 있습니다. <br>
+
+```
+<script>
+		const firstName = ref('홍');
+		const lastName = ref('길동');
+
+		const fullName = computed({
+			get() {
+				return firstName.value + ' ' + lastName.value;
+			},
+			set(value) {
+				[firstName.value, lastName.value] = value.split(' ');
+			},
+		});
+		console.log('Consol출력 :', fullName.value);
+		fullName.value = '짐 코딩';
+</script>
+```
+
+위와 같이 하게 되면, 
+computed 안에서 `get()`은 getter역할을, `set()`은 setter의 역할을 합니다.
+
+```
+fullName.value = '짐 코딩';
+```
+
+이 부분에서 setter를 불러오게 되고, <br>
+해당 값을 띄어쓰기로 split을 하여 firstName과 lastName에 할당합니다. <br>
+<br>
+그럼 결과적으로 짐 코딩이 출력되는 것을 확인할 수 있습니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/7382ea68-80df-498b-9080-f6b965dbc622/image.png">
+</div>
+
+</details>
+
+<details>
+<summary>Class와 Style 바인딩</summary>
+### DOM 요소의 클래스와 스타일 속성에 바인딩하는 방법
+
+클래스를 동적으로 바인딩하려면, `v-bind`와 같은 디렉티블 사용해야했었는데요. <br>
+`v-bind`를 통해 클래스와 인라인 스타일을 조작할 수 있습니다.<br><br> 
+
+#### 클래스에 바인딩하는 방법
+`v-bind`는 단축속성을 이용해서 <br>
+`v-bind:class` 를 `:class`로 사용할 수 있었습니다. <br><br>
+
+`v-bind:class`디렉티브는 일반 class속성과 공존할 수 있습니다. <br>
+(다른 속성은 공존할 수 없지만, class는 특수하게 공존할 수 있습니다.) <br>
+
+```
+<template>
+  <div :class="{ active: true }">텍스트입니다.</div>
+</template>
+```
+
+이렇게하면 `active`가 **클래스에 바인딩**된 것을 확인할 수 있습니다. <br>
+(참고로 객체로 바인딩할 수 있습니다.)
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/76cfac8c-be0b-40e7-99ed-3efa504556cf/image.png">
+</div>
+
+```
+<template>
+	<div>
+		<div :class="{ active: isActive }">텍스트입니다.</div>
+		<button v-on:click="toggle">toggle</button>
+	</div>
+</template>
+
+<script>
+import { ref } from 'vue';
+
+export default {
+	setup() {
+		const isActive = ref(true);
+		const toggle = () => {
+			isActive.value = !isActive.value;
+		};
+
+		return { isActive, toggle };
+	},
+};
+</script>
+```
+
+위와 같이 반응형 상태를 바인딩할 수 있습니다. <br>
+
+그리고 active가 true이면 active가 클래스에 바인딩되고, <br>
+false이면, 바인딩되지 않습니다. 그리고 false이면, 지워집니다. <br>
+(참고로 버튼을 누르면, true와 false가 바뀝니다.)
+<br><br>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/06470a1d-d8a2-44eb-afd1-ae24b5aec578/image.png">
+</div>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/857e0128-5f60-4098-a14d-bab9da2d3bf5/image.png">
+</div>
+
+<br>
+
 </details>
