@@ -1752,4 +1752,53 @@ false이면, 바인딩되지 않습니다. 그리고 false이면, 지워집니�
 
 <br>
 
+그리고 다른 속성과 다르게  HTML 속성과 `v-bind` 디렉티브는 공존할 수 있습니다. <br>
+
+```
+<div class="text" :class="{ active: isActive }">텍스트입니다.</div>
+```
+
+위와 같이 선언했을 때, <br>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/7626fce0-f24c-40d8-ad9e-22cd1bde4e74/image.png">
+</div>
+
+이렇게 함께 공존하는 것을 확인할 수 있습니다. <br><br>
+
+만약에 여러 개의 값을 넣어야한다면, 콤마를 사용할 수 있습니다. <br>
+
+```
+<div class="text" :class="{ active: isActive, text-danger }">
+```
+
+이렇게 되어있을 때, text-danger은 중간에 특수문자가 있으므로, 홑따옴표로 감싸줍니다.
+
+```
+<template>
+  <div class="text" :class="{ active: isActive, 'text-danger': hasError }">
+  ...
+  <button v-on:click="hasError = !hasError">toggleError</button>
+</template>
+
+<script>
+  const hasError = ref(false);
+</script>
+
+<style scoped>
+  .text-danger {
+      color: red;
+  }
+<style>
+```
+
+위의 코드는 'text-danger' 와 관련되어 수정된 내용입니다. <br><br><br>
+
+
+만약에 바인딩할 데이터가 많다면, inline으로 사용하지 않고, object로 선언해서 사용할 수 있습니다.<br>
+
+5분 ~~
+
+
+
 </details>
