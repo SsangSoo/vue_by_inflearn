@@ -2187,5 +2187,98 @@ v-show는 초기 렌더링 비용이 높습니다. <br><br>
 
 > 참고로 `v-if`와 `v-for`를 같이 사용하지 않느 것을 권장하고 있습니다.
 
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+</details>
+
+<details>
+<summary>목록 렌더링 (v-for)</summary>
+
+### v-for
+목록을 렌더링할 때 `v-for` 디렉티브를 사용할 수 있습니다.
+
+```
+const items = reactive([
+  { id: 1, message: 'Java' },
+  { id: 2, message: 'HTML' },
+  { id: 3, message: 'CSS' },
+  { id: 4, message: 'JavaScript' },
+]);
+
+<li v-for="(item, index) in items" :key="item.id">
+  {{ item.message }}
+</li> 
+```
+
+위과 같은 코드가 있을 때, <br>
+
+`v-for=”item in items”` 에서 `items`라는 배열의 요소들을 `item`이라는 변수에 할당합니다. <br>
+`v-for=”(item, index) in items”` 라는 문법을 사용해서 배열의 요소와 인덱스를 가져올 수 있습니다.<br>
+항목을 나열할 때 각 :key 속성에는 고유한 값을 지정해야 합니다. (vue 2.2.0 부터 필수)
+
+> key속성에 대해 궁금한 분들은 공식 홈페이지에서 다 자세하게 찾아보시면 될 거 같습니다.
+
+```
+<li v-for="(item, index) in items" :key="item.id">
+  {{ item.message }}
+</li> 
+```
+
+위으 코드에서 `item.message`를 `item`이라고 바꾸면, 다음과 같이 출력됩니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/9da6e523-cfc4-4cb8-8d06-f7d21a647e3a/image.png">
+</div>
+
+`item.message`로 하면 다음과 같습니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/2f0ecfcc-30b5-46d2-b55b-1637a1fc7801/image.png">
+</div>
+
+그리고 아래와 같은 경고창이 뜰 때, :key 속성에 아래의 코드와 같이 고유한 값을 주면 됩니다. <br>
+
+```
+<li v-for="item in items" :key="item.id">
+```
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/f73651da-8286-4c44-83d0-6a4b51dfc3f6/image.png">
+</div>
+
+<br>
+
+인덱스는 다음과 같이 사용하면 됩니다.
+
+```
+인덱스: {{ index }},{{ item.message }}
+```
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/8dd083bd-a656-471f-affd-bc34c095427f/image.png">
+</div>
+
+이렇게 출력되는 것을 확인할 수 있습니다.<br><br>
+
+아이디가 짝수인 것만 출력해보도록 하겠습니다.
+
+v-for와 v-if를 함께 사용하지 않는 것을 권장했는데,
+이때는 template로 감싸서 사용하시면 됩니다.
+
+```
+<template v-for="(item, index) in items" :key="item.id">
+    <li v-if="item.id % 2 === 0">
+        ID: {{ item.id }} 인덱스: {{ index }},{{ item.message }}
+    </li>
+</template>
+```
+
+결과는 다음과 같습니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/e75582f9-91c7-4d4f-9b1a-f9f3b5c970f8/image.png">
+</div>
+
+3분 30초~~
+
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 </details>
