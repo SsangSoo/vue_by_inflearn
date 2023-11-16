@@ -1797,8 +1797,231 @@ false이면, 바인딩되지 않습니다. 그리고 false이면, 지워집니�
 
 만약에 바인딩할 데이터가 많다면, inline으로 사용하지 않고, object로 선언해서 사용할 수 있습니다.<br>
 
-5분 ~~
+```
+<div class="text" :class="classObject">
+			<!--  오브젝트로 선언 -->
+			
+		---
+		
+		const classObject = reactive({
+			active: true,
+			'text-danger': false,
+		});
+		
+		---
+		
+		return { classObject };		
+```
+
+위의 코드처럼 active가 true이고, text-danger이 false라면, <br>
+다음과 같이 나옵니다.
 
 
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/3a58885b-dcd4-47d4-b50e-cb7f0aa7d6d5/image.png">
+</div>
 
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/8da67c10-e20e-49ed-a8ed-ac19104c3d19/image.png">
+</div>
+
+반면, <br>
+`'text-danger': false,`을 true로 바꾸면..<br>
+다음과 같이 됩니다. <br>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/cfa43baf-abfb-488a-afa3-8709285dda14/image.png">
+</div>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/1a8df5cd-a9c3-4a17-a33e-b4452ac89208/image.png">
+</div>
+
+만약, <br>
+active 되는 상태가 여러 개가 필요하면, computed를 활용하면 조금 더 효율적입니다.<br>
+다음과 같이 할 수 있습니다.
+
+```
+const classObject = computed(() => {
+			return {
+				active: true,
+				'text-danger': true,
+			};
+		});
+```
+
+만약 조건이 여러 개 필요하다면, 다음과 같이 할 수 있습니다. <br>
+
+```
+const classObject = computed(() => {
+			return {
+				active: true && true,
+				'text-danger': true && true,
+			};
+		});
+```
+
+혹은 클래스가 많이 필요할 수도 있습니다. <br>
+다음과 같이 배열로 선언하시면 됩니다.
+
+```
+	<div class="text" :class="{ classObject, activeClass, errorClass }">
+	
+	---
+	
+        const classObject = computed(() => {
+        return {
+            active: true && true,
+            'text-danger': true && true,
+          };
+		});
+
+		const activeClass = ref('active');
+		const errorClass = ref('error');
+```
+
+결과는 다음과 같습니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/254bd0af-7e76-463f-a4bb-c52f82d3eba0/image.png">
+</div>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/ff391416-76b0-4f5a-84aa-2ba49f29faad/image.png">
+</div>
+
+그리고 배열 안에 자바스크립트 표현식도 넣을 수 있습니다. <br>
+
+```
+<div
+			class="text"
+			:class="[isActive ? 'active-class' : 'class', errorClass]"
+		>
+			텍스트입니다.
+		</div>
+```
+
+acitve가 true이므로 결과는 다음과 같습니다. <br>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/8c4b9752-80de-4db6-812e-11ae49627973/image.png">
+</div>
+
+혹여 속성을 더 추가하고 싶을 때, 
+클래스에 속성을 더 추가하면 됩니다.
+
+```
+		const classObject = computed(() => {
+			return {
+				active: true && true,
+				'text-danger': true && true,
+				'text-blue': true, // 추가한 속성
+			};
+		});
+
+---
+
+        <div
+			class="text"
+			:class="[isActive ? 'active-class' : 'class', errorClass, classObject]"
+		>
+			텍스트입니다.
+		</div>
+
+```
+
+이렇게 하면 됩니다.
+<br><br>
+
+이제 inline-styling을 바인딩하는 방법을 알아보도록 하겠습니다.
+<br> 
+div태그 에 lorem 탭을 누르면, 다음과 같이 됩니다.
+
+```
+<div :style="{}">
+			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti laborum
+			quos veniam. Assumenda, consequatur cumque dicta dignissimos eos et
+			impedit in iste laudantium maiores maxime modi reiciendis repellat tempore
+			voluptatem!
+		</div>
+```
+
+그리고 div 태그 내의 `:style="{}"`처럼 클래스나 객체나 배열로 바인딩할 수 있습니다. <br>
+<br>
+다음과 같이 해보면,
+
+```
+const styleObject = reactive({
+			color: 'red',
+			fontSize: '13px',
+		});
+		return {
+			styleObject,
+		};
+		
+		...
+		
+		<템플릿>
+		<div :style="styleObject">
+		...
+		
+```
+
+이와 같이 코드가 있을 때, <br>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/9ee2f33d-c826-4018-b273-4071ed573a0f/image.png">
+</div>
+
+이처럼 style이 적용된 것을 알 수 있습니다. <br>
+
+> 참고로 CSS의 스타일 적용시 속성명을 넣을 때는 카멜케이스를 일반적으로 넣습니다.
+
+폰트사이즈를 정해서 버튼 두개로 폰트를 조정하도록 해보겠습니다.<br><br>
+
+```
+    	<button v-on:click="fontSize--">-</button>
+		<button v-on:click="fontSize++">+</button>
+
+...
+
+		const fontSize = ref(13);
+		const styleObject = computed(() => {
+			return {
+				color: 'red',
+				fontSize: fontSize.value + 'px',
+			};
+		});
+
+		return {
+			styleObject,
+			fontSize,
+		};
+```
+
+위와 같이 코드가 있을 때,
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/aea12a00-1b06-477f-95d3-236cbbd4c656/image.png">
+</div>
+
+이렇게 나오는데, `+` 버튼을 3번 눌러보겠습니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/38ea5110-81be-46ab-8005-7a13d4cdfcc1/image.png">
+</div>
+
+현재 16이기때문에, 7번을 `-`를 눌러 보겠습니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/55a66ad2-e218-4e35-9739-9ae52ce5e83a/image.png">
+</div>
+
+이처럼 지금까지 class와 style에 바인딩하는 법을 알아보았습니다.
+
+</details>
+
+<details>
+<summary></summary>
 </details>
