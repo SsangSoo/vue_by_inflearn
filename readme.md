@@ -2004,7 +2004,7 @@ const styleObject = reactive({
 
 <div align="left">
   <img src="https://velog.velcdn.com/images/tjdtn4484/post/aea12a00-1b06-477f-95d3-236cbbd4c656/image.png">
-</div>
+</div>ㄴ
 
 이렇게 나오는데, `+` 버튼을 3번 눌러보겠습니다.
 
@@ -2023,5 +2023,169 @@ const styleObject = reactive({
 </details>
 
 <details>
-<summary></summary>
+<summary>조건부 렌더링 (v-if, v-show)</summary>
+
+### v-if
+
+특정 조건에 따라 렌더링 여부를 결정할 때는 `v-if` 디렉티브를 사용합니다.<br>
+`v-if`는 렌더링 조건을 결정할 수 있습니다. <br>
+자바스크립트 표현식과 매우 유사합니다.<br>
+만약, 조건식이 맞으면 출력되고, 조건식이 거짓이면, 출력되지 않습니다.<br>
+<br>
+그리고 if, else, else-if가 있듯이, `v-else`, `v-else-if` 가 있습니다.
+
+```
+<h2 v-if="visible">Hello Vue3!</h2>
+
+...
+	const visible = ref(true);
+		return { visible };
+
+```
+
+위와 같은 코드가 있을 때,
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/1c9a8e8d-6a04-429f-8735-a859bdff8e5a/image.png">
+</div>
+
+`v-if`의 조건식이 true이기 때문에, h2가 렌더링 된 것을 확인할 수 있습니다.<br>
+만약 위의 코드에서 ref 내부의 `true`를 `false`로 줬다면, 렌더링 되지 않습니다. <br>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/3fe0db86-b3ae-40d1-ac74-88940403ed09/image.png">
+</div>
+
+주석처리가 되어있네요. <br>
+`v-if`는 false일 때 렌더링조차 되지 않는 것을 확인할 수 있습니다.<br><br>
+
+```
+		<h2 v-if="visible">Hello Vue3!</h2>
+		<h2 v-else>false 입니다.</h2>
+		<button v-on:click="visible = !visible">toggle</button>
+```
+
+이렇게 하면, 토글을 클릭하면 visible의 값이 바껴서 출력문자가 바뀝니다. <br><br>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/a90d5511-074b-46c3-b6bd-e4ad9b2a0793/image.png">
+</div>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/0c8bd3d9-bab8-493d-a853-c353ed2821ac/image.png">
+</div>
+
+`v-else-if` 예시도 보겠습니다.
+
+```
+<button v-on:click="type = 'A'">A</button>
+<button v-on:click="type = 'B'">B</button>
+<button v-on:click="type = 'C'">C</button>
+<button v-on:click="type = 'D'">D</button>
+<h2 v-if="type === 'A'">A입니다.</h2>
+<h2 v-else-if="type === 'B'">B입니다.</h2>
+<h2 v-else-if="type === 'C'">C입니다.</h2>
+<h2 v-else>A, B, C가 아닙니다.</h2>
+		
+  ---
+const type = ref('A');
+return { type };
+  
+```
+
+위와 같은 코드가 있을 때 결과는 다음과 같습니다.<br><br>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/6d886265-3054-4898-9237-7b82ee0a6519/image.png">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/6a18e3ec-d66c-43f5-ab25-897d6e0db12f/image.png">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/3a395403-a4f1-4536-929f-8dc07efec89e/image.png">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/8702935e-5b30-4984-9ffa-f18270d1285d/image.png">
+</div>
+
+만약 여러 개의 HTML 요소를 `v-if` 디렉티브 하나의 조건으로 렌더링을 하고 싶다면, <br>
+<template> 를 사용할 수 있습니다. <br>
+다음 코드를 복사해서 붙여넣습니다.
+
+```
+<template v-if="visible">
+  <h1>Title</h1>
+  <p>Paragraph 1</p>
+  <p>Paragraph 2</p>
+</template>
+```
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/dc843cde-3947-4981-90a5-139d98e79ccf/image.png">
+</div>
+
+다음과 같이 하면 됩니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/3033a780-1881-4f68-b30e-657383b1b997/image.png">
+</div>
+
+화면상, `visible`이 현재 false이기 때문에, <br>
+아무것도 출력되지 않지만, toggle을 눌러 true로 바꿔주면, 다음과 같이 렌더링 됩니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/48226c83-0506-43e6-8e4c-a412ceba6050/image.png">
+</div>
+
+템플릿으로 조건을 거는 것은 실무에서도 자주 쓰입니다.^^
+<br><br>
+
+`v-show` 디렉티브로 특정 조건의 렌더링 여부를 결정할 수 있습니다.<br>
+이 디렉티브는 `else` 같은 건 없습니다.<br> 그냥 v-show만 있습니다.
+
+```
+<h1 v-show="ok">Title입니다.</h1>
+<button v-on:click="ok = !ok">show toggle</button>
+
+const ok = ref(true);
+return {  ok };
+
+```
+
+위와 같은 코드가 있다고 했을 때, <br>
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/de0b7e6f-e380-448b-8e44-efda1d31e2b6/image.png">
+</div>
+
+처음 ok값이 true이므로 위와 같이 나오는 것을 확인할 수 있습니다.<br>
+그리고 show toggle을 눌러보면, 다음처럼 나오지 않습니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/117813f1-3c8c-4d6a-a092-fe32c1fe6814/image.png">
+</div>
+
+UI적으로는 `v-if`와 동일하지만, `v-if`는 아까 본 것처럼 html 소스에선 주석처리를 했다면, <br>
+`v-show`는 html요소는 나옵니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/9477c79d-2b69-4909-b535-2fdae7f37e08/image.png">
+</div>
+
+style에 표시여부가 **none**임을 확인할 수 있습니다.<br>
+이는 `v-show`와 `v-if`의 차이입니다.
+
+#### v-if
+- `v-if`는 실제로 렌더링 됩니다. 
+  - 전환할 때 블록 내부의 컴포넌트들이 제거되고, 다시 생성됩니다.
+- `v-if`는지연됩니다. 
+  - 초기 렌더링시 조건이 거짓이면, 아무 작업도 하지 않습니다. 즉, 조건부 블록은 조건이 처음으로 참이 될 때까지 렌더링되지 않습니다.
+
+#### v-show
+- 엘리먼트는 CSS 기반 전환으로 초기 조건과 관계 없이 항상 렌더링됩니다.
+- v-show는 DOM에 일단 우선 렌더링하고, 조건에 따라 CSS의 display의 block, display, none 속성으로 전환됩니다.
+
+#### v-if VS v-show
+v-if는 전환 비율이 높은 반면, <br>
+v-show는 초기 렌더링 비용이 높습니다. <br><br>
+
+따라서, 자주 전환해야 한다면, `v-show`를, 런타임시 조건이 변경되지 않는다면, `v-if`를 사용하는 게 좋습니다.
+
+> 참고로 `v-if`와 `v-for`를 같이 사용하지 않느 것을 권장하고 있습니다.
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 </details>
