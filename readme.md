@@ -2277,8 +2277,48 @@ v-for와 v-if를 함께 사용하지 않는 것을 권장했는데,
   <img src="https://velog.velcdn.com/images/tjdtn4484/post/e75582f9-91c7-4d4f-9b1a-f9f3b5c970f8/image.png">
 </div>
 
-3분 30초~~
+computed를 활용할 수도 있습니다.
 
+```
+const evenItems = computed(() => items.filter(item => item.id % 2 === 0));
+```
 
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+Array API를 이용해서 짝수인 것만을 이용하여 출력합니다.
+
+```
+<template v-for="(item, index) in evenItems" :key="item.id">
+  <!--				<li v-if="item.id % 2 === 0">-->
+  <li>ID: {{ item.id }} 인덱스: {{ index }},{{ item.message }}</li>
+</template>
+```
+
+template은 다음과 같이 합니다. <br><br>
+
+객체를 `v-for`를 통해서 뿌려보도록 하겠습니다. <br>
+
+```
+<li v-for="(value, key, index) in myObject" :key="key">
+    {{ key }}-{{ value }}-{{ index }}
+</li>
+
+---
+
+  const myObject = reactive({
+      title: '제목',
+      author: '홍길동',
+      publishedAt: '2023-11-17',
+  });
+```
+
+이처럼 할 수 있습니다. <br>
+key는 title, author, publishedAt이 될 것이고, <br>
+value는 '제목','홍길동','2023-11-17'이 될 것입니다. <br><br>
+
+결과는 다음과 같습니다.
+
+<div align="left">
+  <img src="https://velog.velcdn.com/images/tjdtn4484/post/376df94d-9908-42f9-9ab1-0195d0743b01/image.png">
+</div>
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 </details>
