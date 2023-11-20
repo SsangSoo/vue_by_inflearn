@@ -2320,5 +2320,4 @@ value는 '제목','홍길동','2023-11-17'이 될 것입니다. <br><br>
   <img src="https://velog.velcdn.com/images/tjdtn4484/post/376df94d-9908-42f9-9ab1-0195d0743b01/image.png">
 </div>
 
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 </details>
